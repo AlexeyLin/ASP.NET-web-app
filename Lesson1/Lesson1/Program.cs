@@ -17,8 +17,7 @@ namespace Lesson1
             {
                 var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"https://jsonplaceholder.typicode.com/posts/{idPost}");
                 HttpResponseMessage response = await client.SendAsync(httpRequest);
-                HttpContent responseContent = response.Content;
-                var json = await responseContent.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringAsync();
                 var post = JsonSerializer.Deserialize<PostInfo>(json);
                 await File.AppendAllTextAsync(file, $"{post.userId}\n{post.id}\n{post.title}\n{post.body}\n\n");
             }
