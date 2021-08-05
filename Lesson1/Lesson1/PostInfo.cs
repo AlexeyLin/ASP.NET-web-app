@@ -6,9 +6,9 @@ namespace Lesson1
 {
     class PostInfo
     {
-        public string userId { get; set; }
+        public int userId { get; set; }
 
-        public string id { get; set; }
+        public int id { get; set; }
 
         public string title { get; set; }
 

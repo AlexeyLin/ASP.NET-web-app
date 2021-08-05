@@ -8,34 +8,21 @@ namespace Lesson1
 {
     class Program
     {
-        private readonly HttpClient client = new HttpClient();
+        private static HttpClient client = new HttpClient();
 
         static async Task Main()
         {
-            var file = Environment.CurrentDirectory;
+            var file = Path.Combine(Environment.CurrentDirectory, "result.txt");
             for (var idPost = 4; idPost < 14; idPost++)
             {
-                var post = await GetPostInfo(idPost);
-                await File.ReadAllTextAsync(File, post.ToString() + Environment.NewLine);
-            }
-
-            Console.ReadKey();
-        }
-
-        public async Task<PostInfo> GetPostInfo(int id)
-        {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"https://jsonplaceholder.typicode.com/posts/{id}");
-            try
-            {
+                var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"https://jsonplaceholder.typicode.com/posts/{idPost}");
                 HttpResponseMessage response = await client.SendAsync(httpRequest);
-
-                using var responseStream = await response.Content.ReadAsStreamAsync();
-                return await JsonSerializer.DeserializeAsync<PostInfo>(responseStream);
+                HttpContent responseContent = response.Content;
+                var json = await responseContent.ReadAsStringAsync();
+                var post = JsonSerializer.Deserialize<PostInfo>(json);
+                await File.AppendAllTextAsync(file, $"{post.userId}\n{post.id}\n{post.title}\n{post.body}\n\n");
             }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            Console.ReadKey();
         }
     }
 }
